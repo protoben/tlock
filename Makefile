@@ -8,7 +8,7 @@
 CC=gcc
 CFLAGS=-lcurses -lcrypt '-DCOLORVALS=${COLORVALS}'
 
-COLORVALS={{250, 500, 750}, {500, 750, 250}, {750, 250, 500}}
+COLORVALS={{250, 500, 750}, {500, 750, 250}, {750, 250, 500}, {500, 250, 750}, {250, 750, 500}, {750, 500, 250}, {750, 500, 250}, {500, 250, 750}, {250, 750, 500}}
 OBJS=tlock.o
 CHOWN=sudo chown root:root
 CHMOD=sudo chmod 4755
