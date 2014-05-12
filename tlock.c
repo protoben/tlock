@@ -44,21 +44,23 @@ int startup(void)
 
   if(has_colors())
   {
+    start_color();
+
 #ifdef COLORVALS
     if(can_change_color())
     { 
-      num_colors = sizeof(colorvals);
+      num_colors = sizeof(colorvals) / sizeof(*colorvals);
 
-      for(i = 0; i < num_colors && i < COLORS && i < COLOR_PAIRS; ++i)
+      for(i = 0; i <= num_colors && i <= COLORS && i < COLOR_PAIRS; ++i)
       {
-        init_color(i, colorvals[i][0], colorvals[i][1], colorvals[i][2]);
-        init_pair(i + 1, COLOR_BLACK, i);
+        init_color(i + 1, colorvals[i][0], colorvals[i][1], colorvals[i][2]);
+        init_pair(i + 1, COLOR_BLACK, i + 1);
       }
     }
     else
 #endif
     {
-      start_color();
+      num_colors = 6;
 
       init_pair(1, COLOR_BLACK, COLOR_RED);
       init_pair(2, COLOR_BLACK, COLOR_GREEN);
@@ -66,8 +68,6 @@ int startup(void)
       init_pair(4, COLOR_BLACK, COLOR_BLUE);
       init_pair(5, COLOR_BLACK, COLOR_MAGENTA);
       init_pair(6, COLOR_BLACK, COLOR_CYAN);
-
-      num_colors = 6;
     }
   }
 
@@ -116,7 +116,7 @@ void readpw(char *shadowpw)
         wbkgd(winp, ' ' | COLOR_PAIR(r));
         wrefresh(winp);
 
-       userpw[i] = c;
+        userpw[i] = c;
         if(i < 254) ++i;
         else i = 0;
         break;
