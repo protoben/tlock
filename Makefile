@@ -6,9 +6,9 @@
 #####################################################
 
 CC=gcc
-CFLAGS=-lcurses -lcrypt '-DCOLORS=${COLORS}'
+CFLAGS=-lcurses -lcrypt '-DCOLORVALS=${COLORVALS}'
 
-COLORS={{0x8888, 0xaaaa, 0xcccc}}
+COLORVALS={{250, 500, 750}, {500, 750, 250}, {750, 250, 500}, NULL}
 OBJS=tlock.o
 CHOWN=sudo chown root:root
 CHMOD=sudo chmod 4755
