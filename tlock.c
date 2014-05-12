@@ -46,14 +46,14 @@ int startup(void)
   {
 #ifdef COLORVALS
     if(can_change_color())
-    {
+    { 
+      num_colors = sizeof(colorvals);
+
       for(i = 0; i < num_colors && i < COLORS && i < COLOR_PAIRS; ++i)
       {
         init_color(i, colorvals[i][0], colorvals[i][1], colorvals[i][2]);
         init_pair(i + 1, COLOR_BLACK, i);
       }
-      
-      num_colors = i;
     }
     else
 #endif
