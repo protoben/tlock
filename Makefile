@@ -6,21 +6,23 @@
 #####################################################
 
 CC=gcc
-CCARGS=-lcurses -lcrypt
+CFLAGS=-lcurses -lcrypt '-DCOLORS=${COLORS}'
+
+COLORS={{0x8888, 0xaaaa, 0xcccc}}
 OBJS=tlock.o
 CHOWN=sudo chown root:root
 CHMOD=sudo chmod 4755
 NAME=tlock
 
 all: ${OBJS}
-	${CC} -o ${NAME} ${CCARGS} ${OBJS}
+	${CC} -o ${NAME} ${CFLAGS} ${OBJS}
 	@echo -e "\n\n***\nTlock must be suid root."
 	@sudo echo -e "***\n"
 	${CHOWN} ./${NAME}
 	${CHMOD} ./${NAME}
 
 tlock:
-	${CC} -c ${CCARGS} tlock.c
+	${CC} -c ${CFLAGS} tlock.c
 
 clean:
 	@for i in ${OBJS} ${NAME}; do \
