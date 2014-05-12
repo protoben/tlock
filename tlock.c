@@ -67,6 +67,9 @@ void readpw(char *shadowpw)
 {
   char userpw[256];
   int c, r = 1, i = 0;
+  WINDOW *winp;
+
+  winp = newwin(0,0,0,0);
 
   while((c = getch()) != ERR)
     switch(c)
@@ -77,22 +80,24 @@ void readpw(char *shadowpw)
           return;
       case KEY_ESCAPE:
         i = 0;
-        bkgd(' ' | COLOR_PAIR(0));
-        refresh();
+        wbkgd(winp, ' ' | COLOR_PAIR(0));
+        wrefresh(winp);
         break;
       case KEY_BACKSPACE:
         if(i > 0) --i;
         break;
       default:
         r = ((r + rand()) % 4) + 1;
-        bkgd(' ' | COLOR_PAIR(r));
-        refresh();
+        wbkgd(winp, ' ' | COLOR_PAIR(r));
+        wrefresh(winp);
 
         userpw[i] = c;
         if(i < 254) ++i;
         else i = 0;
         break;
     }
+
+    delwin(winp);
 }
 
 int main(int argc, char **argv)
@@ -104,5 +109,5 @@ int main(int argc, char **argv)
   shadowpw = getshadowpw();
   readpw(shadowpw);
 
-  return 0;
+  return EXIT_SUCCESS;
 }
