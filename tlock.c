@@ -11,6 +11,12 @@
 
 #define KEY_ESCAPE 27
 
+#ifdef COLORVALS
+const short colorvals[][3] = COLORVALS;
+#endif
+
+int num_colors;
+
 void die(int eval, const char *msg, ...)
 {
   va_list ap;
@@ -25,6 +31,8 @@ void die(int eval, const char *msg, ...)
 
 int startup(void)
 {
+  int i;
+
   srand(time(0));
   setlocale(LC_ALL, "");
   initscr();
@@ -32,19 +40,36 @@ int startup(void)
   noecho();
   noqiflush();
   curs_set(0);
+  atexit((void(*)(void))endwin);
 
   if(has_colors())
   {
-    start_color();
-    init_pair(1, COLOR_BLACK, COLOR_RED);
-    init_pair(2, COLOR_BLACK, COLOR_GREEN);
-    init_pair(3, COLOR_BLACK, COLOR_YELLOW);
-    init_pair(4, COLOR_BLACK, COLOR_BLUE);
-    init_pair(5, COLOR_BLACK, COLOR_MAGENTA);
-    init_pair(6, COLOR_BLACK, COLOR_CYAN);
-  }
+#ifdef COLORVALS
+    if(can_change_color())
+    {
+      for(i = 0; i < num_colors && i < COLORS && i < COLOR_PAIRS; ++i)
+      {
+        init_color(i, colorvals[i][0], colorvals[i][1], colorvals[i][2]);
+        init_pair(i + 1, COLOR_BLACK, i);
+      }
+      
+      num_colors = i;
+    }
+    else
+#endif
+    {
+      start_color();
 
-  atexit((void(*)(void))endwin);
+      init_pair(1, COLOR_BLACK, COLOR_RED);
+      init_pair(2, COLOR_BLACK, COLOR_GREEN);
+      init_pair(3, COLOR_BLACK, COLOR_YELLOW);
+      init_pair(4, COLOR_BLACK, COLOR_BLUE);
+      init_pair(5, COLOR_BLACK, COLOR_MAGENTA);
+      init_pair(6, COLOR_BLACK, COLOR_CYAN);
+
+      num_colors = 6;
+    }
+  }
 
   return 0;
 }
@@ -87,11 +112,11 @@ void readpw(char *shadowpw)
         if(i > 0) --i;
         break;
       default:
-        r = ((r + rand()) % 4) + 1;
+        r = (r + (rand() % (num_colors - 1))) % num_colors + 1;
         wbkgd(winp, ' ' | COLOR_PAIR(r));
         wrefresh(winp);
 
-        userpw[i] = c;
+       userpw[i] = c;
         if(i < 254) ++i;
         else i = 0;
         break;
