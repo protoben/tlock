@@ -10,7 +10,6 @@
 
 #ifdef USE_PAM
 #include <security/pam_appl.h>
-#include <security/pam_misc.h>
 #else
 #include <shadow.h>
 #endif
