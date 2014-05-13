@@ -6,7 +6,7 @@
 #####################################################
 
 CC=gcc
-CFLAGS=-lcurses -lcrypt '-DCOLORVALS=${COLORVALS}'
+CFLAGS=-lcurses -lcrypt -lpam -lpam_misc '-DCOLORVALS=${COLORVALS}' -DUSE_PAM
 
 COLORVALS={{250, 500, 750}, {500, 750, 250}, {750, 250, 500}, {500, 250, 750}, {250, 750, 500}, {750, 500, 250}, {750, 500, 250}, {500, 250, 750}, {250, 750, 500}}
 OBJS=tlock.o
