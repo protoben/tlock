@@ -5,21 +5,32 @@
 # to auth.
 #####################################################
 
-CC=gcc
-CFLAGS=-lcurses -lcrypt -lpam -lpam_misc '-DCOLORVALS=${COLORVALS}' -DUSE_PAM
+include ./Makefile.conf
 
-COLORVALS={{250, 500, 750}, {500, 750, 250}, {750, 250, 500}, {500, 250, 750}, {250, 750, 500}, {750, 500, 250}, {750, 500, 250}, {500, 250, 750}, {250, 750, 500}}
+CC=gcc
+CFLAGS=-lcurses
+
 OBJS=tlock.o
-CHOWN=sudo chown root:root
-CHMOD=sudo chmod 4755
 NAME=tlock
+
+ifneq ($(strip ${COLORVALS}),)
+CFLAGS+= '-DCOLORVALS=${COLORVALS}'
+endif
+
+ifeq (${USE_PAM},true)
+CFLAGS+= -lpam -DUSE_PAM
+else
+CFLAGS+= -lcrypt
+endif
 
 all: ${OBJS}
 	${CC} -o ${NAME} ${CFLAGS} ${OBJS}
-	@echo -e "\n\n***\nTlock must be suid root."
+ifeq (${USE_PAM},false)
+	@echo -e "\n\n***\nTlock must be suid root if not using pam."
 	@sudo echo -e "***\n"
-	${CHOWN} ./${NAME}
-	${CHMOD} ./${NAME}
+	sudo chown root:root ./${NAME}
+	sudo chmod 4755 ./${NAME}
+endif
 
 tlock:
 	${CC} -c ${CFLAGS} tlock.c
