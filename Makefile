@@ -1,8 +1,9 @@
 #####################################################
-# Makefile for tlock, the simple terminal locker.
+# Makefile for tlock, the simple terminal locker
+# using pam or shadow.
 #
-# Requires sudo, as tlock must be suid root in order
-# to auth.
+# If using shadow, requires sudo, as tlock must be
+# suid root in order to auth.
 #####################################################
 
 include ./Makefile.conf
@@ -24,7 +25,8 @@ CFLAGS+= -lcrypt
 endif
 
 all: ${OBJS}
-	${CC} -o ${NAME} ${CFLAGS} ${OBJS}
+	@${CC} -o ${NAME} ${CFLAGS} ${OBJS}
+	@echo "cc tlock"
 ifeq (${USE_PAM},false)
 	@echo -e "\n\n***\nTlock must be suid root if not using pam."
 	@sudo echo -e "***\n"
@@ -32,13 +34,20 @@ ifeq (${USE_PAM},false)
 	sudo chmod 4755 ./${NAME}
 endif
 
-tlock:
-	${CC} -c ${CFLAGS} tlock.c
+%.o: %.c
+	@${CC} -c ${CFLAGS} $<
+	@echo "cc $@"
+
+install: all
+	@echo "install /usr/bin/tlock"
+	@cp tlock /usr/bin
+ifeq (${USE_PAM},true)
+	@echo "install /etc/pam.d/tlock"
+	@echo -e "auth\trequired\tpam_unix.so nodelay" > /etc/pam.d/tlock
+endif
+
+uninstall:
+	rm -f /usr/bin/tlock /etc/pam.d/tlock
 
 clean:
-	@for i in ${OBJS} ${NAME}; do \
-		if [ -e $$i ]; then       \
-			echo "rm $$i";        \
-			rm -f $$i;            \
-		fi                        \
-	done
+	rm -f ${OBJS} ${NAME}
