@@ -118,6 +118,8 @@ int checkpw(char *userpw)
   switch(err)
   {
     case PAM_SUCCESS: pam_end(handlep, err); return 0;
+    case PAM_CRED_INSUFFICIENT:
+    case PAM_MAXTRIES:
     case PAM_AUTH_ERR: pam_end(handlep, err); return -1;
     default: die(1, "pam_authenticate(): %s\n", pam_strerror(handlep, err));
   }
